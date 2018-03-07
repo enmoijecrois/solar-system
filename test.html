@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Distance des planètes par rapport au soleil - scroll</title>
+<meta name="description" content="Visualiser graphiquement l'éloignement du soleil et des planètes dans le système solaire">
+<link rel="stylesheet" src="tooltipster.bundle.min.css">
+<style>
+* {margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box;}
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section{display:block;}
+body, button, input, select, textarea{font-family:sans-serif;color:#000;}
+
+::-moz-selection{background:#0098d1; color:#fff !important; text-shadow:none;}
+::selection{background:#0098d1; color:#fff !important; text-shadow:none;}
+
+abbr{border:0;outline:none;text-decoration:none;cursor:help;}
+b, strong{font-family:"firasansbold", Helvetica, Arial, Verdana, sans-serif;}
+i, em{font-style:italic;}
+img{max-width:100%;}
+
+a{text-decoration:none;color:#0098d1;outline:0;}
+a:hover{text-decoration:none;color:#1cc2ff;}
+
+.clear{clear:both;}
+.h30{height:30px;}
+
+p,ul,ol,table,fieldset,blockquote,pre,dl,address{
+margin:30px 0 0;
+text-shadow:1px 1px 2px #000;
+-webkit-column-break-after:always;
+break-inside:avoid-column;
+word-wrap:break-word;
+}
+
+body{
+background:#333;
+text-align:left;
+color:#ccc;
+font-family:Arial, Helvetica, Verdana, sans-serif;
+font-size:1em;
+line-height:1.4;
+}
+
+header{
+padding:20px;
+text-shadow:1px 1px 2px #000;
+}
+h1{
+line-height:1.2;
+font-size:2em;
+font-style:italic;
+font-family:"Times New Roman", Times, Georgia, serif;
+color:#98d100;
+}
+h1 #legend{
+font-size:.75em;
+padding:0 0 0 .5em;
+}
+p.description{
+font-family:"Times New Roman", Times, Georgia, serif;
+font-style:italic;
+margin:0;
+}
+footer{
+clear:both;
+margin:30px 0 0;
+padding:10px;
+text-align:center;
+font-size:.875em;
+background:#000;
+}
+
+.grid-container:before, .grid-container:after{
+content:".";display:block;overflow:hidden;visibility:hidden;font-size:0;line-height:0;width:0;height:0;
+}
+.grid-container:after{clear:both;}
+.grid-container{margin-left:auto;margin-right:auto;max-width:1200px;padding:0 15px;}
+.grid-parent{padding:0;}
+.grid-alpha{padding-left:0;}
+.grid-omega{padding-right:0;}
+@media screen and (max-width:767px){
+	.grid-alpha{padding-right:0;}
+	.grid-omega{padding-left:0;}
+	.mobile-grid-100:before, mobile-grid-100:after{content:".";display:block;overflow:hidden;visibility:hidden;font-size:0;line-height:0;width:0;height:0;}
+	.mobile-grid-100:after{clear:both;}
+	.hide-on-mobile{display:none !important;}
+	.mobile-grid-100,.mobile-grid-75,.mobile-grid-50,.mobile-grid-25,.mobile-grid-66,.mobile-grid-33{float:left;}
+	.mobile-grid-100{width:100%;clear:both;}
+	.mobile-grid-75{width:75%;}
+	.mobile-grid-50{width:50%;}
+	.mobile-grid-25{width:25%;}
+	.mobile-grid-66{width:66.66667%;}
+	.mobile-grid-33{width:33.33333%;}
+}
+@media screen and (min-width:768px){
+	.grid-100:before,.grid-100:after{content:".";display:block;overflow:hidden;visibility:hidden;font-size:0;line-height:0;width:0;height:0;}
+	.grid-100:after{clear:both;}
+	.hide-on-desktop{display:none !important;}
+	.grid-100,.grid-75,.grid-50,.grid-25,.grid-66,.grid-33{float:left;padding:0 15px;}
+	.grid-100{width:100%;clear:both;}
+	.grid-75{width:75%;}
+	.grid-50{width:50%;}
+	.grid-25{width:25%;}
+	.grid-66{width:66.66667%;}
+	.grid-33{width:33.33333%;}
+}
+
+.wrapper-scroll{
+-webkit-overflow-scrolling:touch;
+overflow-scrolling:touch;
+overflow:auto;
+background:#000;
+}
+.content{
+width:-moz-max-content;
+width:-webkit-max-content;
+width:-ms-max-content;
+width:max-content;
+background:url(./img/bg-stars2.png) 40% 0 repeat fixed;
+}
+
+.section{
+float:left;
+position:relative;
+overflow:hidden;
+height:300px;
+padding:30px 0 0 30px;
+background:url(./img/bg-stars1.png) 50% 50% repeat fixed;
+}
+.soleil{/*margin-left:30px;*/width:5860px;/* 5790 + 70 */}
+.mercure{width:5030px;/* 10820 - 5790 */}
+.venus{width:4130px;/* 14950 - 10820 */}
+.terre{width:7840px;/* 22790 - 14950 */}
+.mars{width:55053px;/* 77850 - 22790 - 7(14/2) */}
+.jupiter{width:65052px;/* 142900 - 77850 + 7(14/2) - 5(11/2) */}
+.saturne{width:144204px;/* 287100 - 142900 + 6(11/2) - 2(5/2) */}
+.uranus{width:162701px;/* 449800 - 287100 + 3(5/2) - 2(5/2) */}
+.neptune{width:500px;}
+
+.soleil .title, .soleil .param{margin-left:70px;}
+.jupiter .title, .jupiter .param{margin-left:7px;}
+.saturne .title, .saturne .param{margin-left:5px;}
+.uranus .title, .uranus .param,
+.neptune .title, .neptune .param{margin-left:2px;}
+
+.title{
+font-size:2em;
+font-style:italic;
+font-family:"Times New Roman", Times, Georgia, serif;
+color:#98d100;
+text-shadow:1px 1px 2px #000;
+}
+.param .key{
+color:#888;
+cursor:help;
+margin-right:10px;
+font-size:1.125em;
+letter-spacing:0.15em;
+}
+.param .key.diam{
+font-size:.875em;
+}
+.param .val{
+color:#ccc;
+font-size:1em;
+}
+
+.sphere{
+position:absolute;
+top:50%;left:30px;
+transform:translateY(-50%);
+margin:30px 0 0;
+width:1px;
+height:1px;
+border-radius:50%;
+background:#cf0;
+}
+.soleil .sphere{width:140px;height:140px;}
+.jupiter .sphere{width:14px;height:14px;}
+.saturne .sphere{width:11px;height:11px;}
+.uranus .sphere, .neptune .sphere{width:5px;height:5px;}
+.mercure .sphere{background:rgba(255,255,255,.4);}
+.mars .sphere{background:rgba(255,255,255,.6);}
+
+.info{
+position:absolute;
+top:50%;left:40px;
+transform:translateY(-50%);
+margin:30px 0 0;
+font-size:.875em;
+color:#666;
+}
+
+.astero{
+position:absolute;
+top:0;left:14750px;
+color:#ccc;
+width:6000px;
+height:100%;
+background:url(./img/astero.png) 0 0 no-repeat;
+text-align:center;
+padding:100px 0 0;
+font-size:2em;
+font-style:italic;
+font-family:"Times New Roman", Times, Georgia, serif;
+color:#98d100;
+}
+
+.ruler{
+width:100%;
+height:30px;
+background:#222;
+color:#aaa;
+}
+.bar{
+overflow:hidden;
+width:100%;
+height:30px;
+border-top:1px solid #98d100;
+}
+.bar > div{
+float:left;
+height:30px;
+border-right:1px solid #98d100;
+line-height:1.1;
+font-size:12px;
+text-align:left;
+}
+.bar > div{
+padding:2px 5px 0;
+}
+.d_100{width:100px;}
+.d_400{width:400px;}
+.d_500{width:500px;}
+.d_1000{width:1000px;}
+.d_500, .d_1000{background:url(./img/bg-ruler.png) 0 0 no-repeat;}
+.ua{
+display:block;
+float:left;
+width:70px;
+margin-left:-80px;
+padding-top:4px;
+text-align:right;
+font-size:18px;
+color:#98d100;
+}
+.bar #scroll{
+text-align:center;
+padding-top:4px;
+font-size:14px;
+font-weight:bold;
+color:#666;
+}
+.bar #scroll span{
+font-size:20px;
+vertical-align:middle;
+color:#98d100;
+}
+nav{margin:5px;}
+nav ul, nav li{list-style:none;margin:0;padding:0;}
+nav ul{
+display:flex;
+flex-wrap:wrap;
+justify-content:space-between;
+align-items:stretch;
+}
+nav li{
+margin:5px;
+text-align:center;
+line-height:3;
+font-size:1em;
+}
+nav a{
+display:block;
+padding:0 20px;
+height:30px;
+line-height:30px;
+background:#222;
+border-radius:5px;
+border:1px solid #000;
+box-shadow:inset -1px -1px 5px -2px #000;
+text-shadow:0 0 2px #000;
+}
+
+.solsys-container{
+margin:30px 0;
+padding:0 20px 20px;
+background:#222;
+}
+.solsys-content{
+position:relative;
+width:100%;
+height:60px;
+border-bottom:1px solid #999;
+background:#222;
+}
+.solsys-content > div{
+position:absolute;
+bottom:0;
+left:0;
+border-left:1px solid #999;
+height:25px;
+}
+.solsys .a_mercure{left:1.26%;}
+.solsys .a_venus{left:2.39%;}
+.solsys .a_terre{left:3.32%;}
+.solsys .a_mars{left:5.04%;}
+.solsys .a_jupiter{left:17.3%;}
+.solsys .a_saturne{left:31.68%;}
+.solsys .a_uranus{left:63.69%;}
+.solsys .a_neptune{left:100%;}
+.solsys span{
+position:absolute;
+top:-20px;left:-9px;
+display:block;
+width:18px;
+height:20px;
+background:rgba(0,0,0,.5);
+border-radius:3px;
+text-align:center;
+line-height:20px;
+font-size:13px;
+cursor:help;
+}
+.solsys-content > div:nth-child(2),
+.solsys-content > div:nth-child(4){height:10px;}
+
+figure{float:right;width:calc(50% - 15px);margin:0 0 0 30px;padding:5px;background:#444;border:1px solid #666;border-radius:3px;}
+figcaption{font-size:.75em;text-shadow:1px 1px 2px #000;}
+
+table.params{margin:0;width:100%;}
+table.params th,table.params td{border-bottom:1px solid #444;padding:0 2px;text-shadow:1px 1px 2px #000;}
+table.params tr:last-child th,table.params tr:last-child td{border-bottom:0;}
+table.params th{vertical-align:middle;text-align:center;}
+table.params td{font-size:.875em;}
+
+*[class^="icon-"]{display:inline-block;height:16px;background:#c00;}
+.icon-dist{width:39px;background:url(./img/icon-dist.png) 0 0 no-repeat;}
+.icon-diam{width:10px;background:url(./img/icon-diam.png) 0 0 no-repeat;}
+.icon-vit{width:18px;background:url(./img/icon-vit.png) 0 0 no-repeat;}
+.icon-per{width:22px;background:url(./img/icon-per.png) 0 0 no-repeat;}
+.icon-grav{width:18px;background:url(./img/icon-grav.png) 0 0 no-repeat;}
+
+#modal{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+overflow:hidden;
+background:rgba(0,0,0,.75);
+}
+#modal-close{
+color:#fff;
+position:absolute;
+top:30px;
+right:30px;
+line-height:0;
+font-size:35px;
+font-weight:bold;
+z-index:10;
+}
+#modal-close:hover,#modal-close:focus{
+color:#999;
+text-decoration:none;
+cursor:pointer;
+}
+#modal-content{
+position:relative;
+margin:auto;
+width:100%;
+height:100%;
+z-index:5;
+}
+#modal-content img{
+position:absolute;
+top:50%;left:50%;
+transform:translate(-50%, -50%);
+box-shadow:0 0 25px #000;
+}
+
+.autotooltip{
+background:rgba(247,255,215,.9);
+color:#000;
+font-size:.875em;
+z-index:999999;
+position:absolute;
+padding:1px 3px;
+max-width:250px;
+border-radius:3px;
+}
+.autotooltip.animation-scale{
+-webkit-animation-name:scaleTooltip;
+-webkit-animation-duration:.6s;
+-webkit-animation-timing-function:ease;
+animation-name:scaleTooltip;
+animation-duration:.5s;
+animation-timing-function:ease;
+}
+@-webkit-keyframes scaleTooltip{
+from{-webkit-transform:scale(0);transform:scale(0);}
+to{-webkit-transform:scale(1);transform:scale(1);}
+}
+@keyframes scaleTooltip{
+from{-webkit-transform:scale(0);transform:scale(0);}
+to{-webkit-transform:scale(1);transform:scale(1);}
+}
+.autotooltip.animation-fade{
+-webkit-animation-name:fadeTooltip;
+-webkit-animation-duration:.6s;
+-webkit-animation-timing-function:ease;
+animation-name:fadeTooltip;
+animation-duration:.5s;
+animation-timoutg-function:ease;
+}
+@-webkit-keyframes fadeTooltip{
+from{opacity:0;}
+to{opacity:1;}
+}
+@keyframes fadeTooltip{
+from{opacity:0;}
+to{opacity:1;}
+}
+.autotooltip.animation-slide{
+-webkit-animation-name:slideTooltip;
+-webkit-animation-duration:.6s;
+-webkit-animation-timing-function:linear;
+animation-name:slideTooltip;
+animation-duration:.5s;
+animation-timing-function:linear;
+}
+@-webkit-keyframes slideTooltip{
+from{-webkit-transform:translateY(-20%);transform:translateY(-20%);opacity:0.2;}
+to{-webkit-transform:translateY(0);transform:translateY(0);opacity:0.2;}
+}
+@keyframes slideTooltip{
+from{-webkit-transform:translateY(-20%);transform:translateY(-20%);opacity:1;}
+to{-webkit-transform:translateY(0);transform:translateY(0);opacity:1;}
+}
+.autotooltip .autotooltip-arrow{
+position:absolute;
+border:6px solid rgba(247,255,215,.9);
+}
+.autotooltip-arrow.bottomtotop{border-top-color:transparent;border-left-color:transparent;border-right-color:transparent;top:-12px;}
+.autotooltip-arrow.toptobottom{border-bottom-color:transparent;border-left-color:transparent;border-right-color:transparent;bottom:-12px;}
+.autotooltip-arrow.righttoleft{border-left-color:transparent;border-bottom-color:transparent;border-top-color:transparent;left:-12px;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);}
+.autotooltip-arrow.lefttoright{border-right-color:transparent;border-bottom-color:transparent;border-top-color:transparent;right:-12px;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);}
+.autotooltip-arrow.center{left:50%;-webkit-transform:translateX(-50%);transform:translateX(-50%);}
+</style>
+</head>
+<body>
+
+<div class="container">
+	<header>
+		<div class="grid-container">
+			<div class="grid-100">
+				<h1>Système solaire à l'échelle <span id="legend">(1 pixel = 10 000 km)</span></h1>
+				<p class="description">Visualiser graphiquement l'éloignement et la taille des astres dans notre système solaire.</p>
+			</div>
+		</div>
+	</header>
+	<div id="wrapper" class="wrapper-scroll">
+		<div class="content">
+			<div class="section soleil" id="soleil">
+				<div class="title">Soleil</div>
+				<div class="param">
+					<span class="key diam tooltip" data-tooltip-position="top" data-tooltip-text="Diamètre">&#216;</span>
+					<span class="val">1 392 684 km</span>
+				</div>
+				<div class="sphere"></div>
+			</div>
+			<div class="section mercure" id="mercure">
+				<div class="title">Mercure</div>
+				<div class="param">
+					<span class="key dist tooltip" data-tooltip-position="top" data-tooltip-text="Distance du soleil">&#9728;&#26;&#149;</span>
+					<span class="val">57,9 millions km / 0,39 <abbr class="tooltip" data-tooltip-position="top" data-tooltip-text="unité astronomique, 1 UA = distance de la Terre au Soleil">UA</abbr></span>
+				</div>
+				<div class="param">
+					<span class="key diam tooltip" data-tooltip-position="top" data-tooltip-text="Diamètre">&#216;</span>
+					<span class="val">4 879 km</span>
+				</div>
+				<div class="sphere"></div>
+				<div class="info">← le petit point juste ici !</div>
+			</div>
+			<div class="section venus" id="venus">
+				<div class="title">Vénus</div>
+				<div class="param">
+					<span class="key dist tooltip" data-tooltip-position="top" data-tooltip-text="Distance du soleil">&#9728;&#26;&#149;</span>
+					<span class="val">108,2 millions km / 0,72 <abbr class="tooltip" data-tooltip-position="top" data-tooltip-text="unité astronomique, 1 UA = distance de la Terre au Soleil">UA</abbr></span>
+				</div>
+				<div class="param">
+					<span class="key diam tooltip" data-tooltip-position="top" data-tooltip-text="Diamètre">&#216;</span>
+					<span class="val">12 104 km</span>
+				</div>
+				<div class="sphere"></div>
+			</div>
+			<div class="section terre" id="terre">
+				<div class="title">Terre</div>
+				<div class="param">
+					<span class="key dist tooltip" data-tooltip-position="top" data-tooltip-text="Distance du soleil">&#9728;&#26;&#149;</span>
+					<span class="val">149,5 millions km / 1 <abbr class="tooltip" data-tooltip-position="top" data-tooltip-text="unité astronomique, 1 UA = distance de la Terre au Soleil">UA</abbr></span>
+				</div>
+				<div class="param">
+					<span class="key diam tooltip" data-tooltip-position="top" data-tooltip-text="Diamètre">&#216;</span>
+					<span class="val">12 742 km</span>
+				</div>
+				<div class="sphere"></div>
+			</div>
+			<div class="section mars" id="mars">
+				<div class="title">Mars</div>
+				<div class="param">
+					<span class="key dist tooltip" data-tooltip-position="top" data-tooltip-text="Distance du soleil">&#9728;&#26;&#149;</span>
+					<span class="val">227,9 millions km / 1,52 <abbr class="tooltip" data-tooltip-position="top" data-tooltip-text="unité astronomique, 1 UA = distance de la Terre au Soleil">UA</abbr></span>
+				</div>
+				<div class="param">
+					<span class="key diam tooltip" data-tooltip-position="top" data-tooltip-text="Diamètre">&#216;</span>
+					<span class="val">6 779 km</span>
+				</div>
+				<div class="sphere"></div>
+				<div class="info">← le petit point juste ici !</div>
+				<div class="astero">Ceinture d'astéroïdes</div>
+			</div>
+			<div class="section jupiter" id="jupiter">
+				<div class="title">Jupiter</div>
+				<div class="param">
+					<span class="key dist tooltip" data-tooltip-position="top" data-tooltip-text="Distance du soleil">&#9728;&#26;&#149;</span>
+					<span class="val">778,5 millions km / 5,20 <abbr class="tooltip" data-tooltip-position="top" data-tooltip-text="unité astronomique, 1 UA = distance de la Terre au Soleil">UA</abbr></span>
+				</div>
+				<div class="param">
+					<span class="key diam tooltip" data-tooltip-position="top" data-tooltip-text="Diamètre">&#216;</span>
+					<span class="val">139 822 km</span>
+				</div>
+				<div class="sphere"></div>
+			</div>
+			<div class="section saturne" id="saturne">
+				<div class="title">Saturne</div>
+				<div class="param">
+					<span class="key dist tooltip" data-tooltip-position="top" data-tooltip-text="Distance du soleil">&#9728;&#26;&#149;</span>
+					<span class="val">1,429 milliard km / 9,54 <abbr class="tooltip" data-tooltip-position="top" data-tooltip-text="unité astronomique, 1 UA = distance de la Terre au Soleil">UA</abbr></span>
+				</div>
+				<div class="param">
+					<span class="key diam tooltip" data-tooltip-position="top" data-tooltip-text="Diamètre">&#216;</span>
+					<span class="val">116 464 km</span>
+				</div>
+				<div class="sphere"></div>
+			</div>
+			<div class="section uranus" id="uranus">
+				<div class="title">Uranus</div>
+				<div class="param">
+					<span class="key dist tooltip" data-tooltip-position="top" data-tooltip-text="Distance du soleil">&#9728;&#26;&#149;</span>
+					<span class="val">2,871 milliards km / 19,2 <abbr class="tooltip" data-tooltip-position="top" data-tooltip-text="unité astronomique, 1 UA = distance de la Terre au Soleil">UA</abbr></span>
+				</div>
+				<div class="param">
+					<span class="key diam tooltip" data-tooltip-position="top" data-tooltip-text="Diamètre">&#216;</span>
+					<span class="val">50 724 km</span>
+				</div>
+				<div class="sphere"></div>
+			</div>
+			<div class="section neptune" id="neptune">
+				<div class="title">Neptune</div>
+				<div class="param">
+					<span class="key dist tooltip" data-tooltip-position="top" data-tooltip-text="Distance du soleil">&#9728;&#26;&#149;</span>
+					<span class="val">4,498 milliards km / 30 <abbr class="tooltip" data-tooltip-position="top" data-tooltip-text="unité astronomique, 1 UA = distance de la Terre au Soleil">UA</abbr></span>
+				</div>
+				<div class="param">
+					<span class="key diam tooltip" data-tooltip-position="top" data-tooltip-text="Diamètre">&#216;</span>
+					<span class="val">49 244 km</span>
+				</div>
+				<div class="sphere"></div>
+			</div>
+			<div class="clear"></div>
+			<div class="ruler">
+				<div class="bar"></div>
+			</div>
+		</div>
+	</div>
+	<nav>
+		<ul>
+			<li><a class="shortcut" href="#soleil">Soleil</a></li>
+			<li><a class="shortcut" href="#mercure">Mercure</a></li>
+			<li><a class="shortcut" href="#venus">Vénus</a></li>
+			<li><a class="shortcut" href="#terre">Terre</a></li>
+			<li><a class="shortcut" href="#mars">Mars</a></li>
+			<li><a class="shortcut" href="#jupiter">Jupiter</a></li>
+			<li><a class="shortcut" href="#saturne">Saturne</a></li>
+			<li><a class="shortcut" href="#uranus">Uranus</a></li>
+			<li><a class="shortcut" href="#neptune">Neptune</a></li>
+		</ul>
+	</nav>
+	<div class="solsys solsys-container">
+		<div class="solsys-content">
+			<div class="a_soleil"><span class="tooltip" data-tooltip-position="top" data-tooltip-text="Soleil">S</span></div>
+			<div class="a_mercure"><span class="tooltip" data-tooltip-position="top" data-tooltip-text="Mercure">M</span></div>
+			<div class="a_venus"><span class="tooltip" data-tooltip-position="top" data-tooltip-text="Vénus">V</span></div>
+			<div class="a_terre"><span class="tooltip" data-tooltip-position="top" data-tooltip-text="Terre">T</span></div>
+			<div class="a_mars"><span class="tooltip" data-tooltip-position="top" data-tooltip-text="Mars">M</span></div>
+			<div class="a_jupiter"><span class="tooltip" data-tooltip-position="top" data-tooltip-text="Jupiter">J</span></div>
+			<div class="a_saturne"><span class="tooltip" data-tooltip-position="top" data-tooltip-text="Saturne">S</span></div>
+			<div class="a_uranus"><span class="tooltip" data-tooltip-position="top" data-tooltip-text="Uranus">U</span></div>
+			<div class="a_neptune"><span class="tooltip" data-tooltip-position="top" data-tooltip-text="Neptune">N</span></div>
+		</div>
+	</div>
+	<div class="grid-container">
+		<div class="grid-25 mobile-grid-50">
+			<div class="title">Mercure</div>
+			<table class="params">
+				<tr>
+					<th><span class="icon-dist tooltip" data-tooltip-position="top" data-tooltip-text="Distance du soleil"></span></th>
+					<td>57,9 millions km<br>
+					0,39 <abbr class="tooltip" data-tooltip-position="top" data-tooltip-text="unité astronomique, 1 UA = distance de la Terre au Soleil">UA</abbr></td>
+				</tr>
+				<tr>
+					<th><span class="icon-diam tooltip" data-tooltip-position="top" data-tooltip-text="Diamètre"></span></th>
+					<td>4 879 km</td>
+				</tr>
+				<tr>
+					<th><span class="icon-vit tooltip" data-tooltip-position="top" data-tooltip-text="Vitesse de rotation (à l'équateur)"></span></th>
+					<td>10,9 km/h</td>
+				</tr>
+				<tr>
+					<th><span class="icon-per tooltip" data-tooltip-position="top" data-tooltip-text="Période de rotation (jour solaire)"></span></th>
+					<td>58j 15h 30m</td>
+				</tr>
+				<tr>
+					<th><span class="icon-grav tooltip" data-tooltip-position="top" data-tooltip-text="Gravité"></span></th>
+					<td>3,7 m/s²</td>
+				</tr>
+			</table>
+		</div>
+		<div class="grid-25 mobile-grid-50">
+			<div class="title">Vénus</div>
+			<table class="params">
+				<tr>
+					<th><span class="icon-dist tooltip" data-tooltip-position="top" data-tooltip-text="Distance du soleil"></span></th>
+					<td>108,2 millions km<br>
+					0,72 <abbr class="tooltip" data-tooltip-position="top" data-tooltip-text="unité astronomique, 1 UA = distance de la Terre au Soleil">UA</abbr></td>
+				</tr>
+				<tr>
+					<th><span class="icon-diam tooltip" data-tooltip-position="top" data-tooltip-text="Diamètre"></span></th>
+					<td>12 104 km</td>
+				</tr>
+				<tr>
+					<th><span class="icon-vit tooltip" data-tooltip-position="top" data-tooltip-text="Vitesse de rotation (à l'équateur)"></span></th>
+					<td>6,5 km/h</td>
+				</tr>
+				<tr>
+					<th><span class="icon-per tooltip" data-tooltip-position="top" data-tooltip-text="Période de rotation (jour solaire)"></span></th>
+					<td>116j 18h 0m</td>
+				</tr>
+				<tr>
+					<th><span class="icon-grav tooltip" data-tooltip-position="top" data-tooltip-text="Gravité"></span></th>
+					<td>3,7 m/s²</td>
+				</tr>
+			</table>
+		</div>
+		<div class="grid-25 mobile-grid-50">
+			<div class="title">Terre</div>
+			<table class="params">
+				<tr>
+					<th><span class="icon-dist tooltip" data-tooltip-position="top" data-tooltip-text="Distance du soleil"></span></th>
+					<td>149,5 millions km<br>
+					1 <abbr class="tooltip" data-tooltip-position="top" data-tooltip-text="unité astronomique, 1 UA = distance de la Terre au Soleil">UA</abbr></td>
+				</tr>
+				<tr>
+					<th><span class="icon-diam tooltip" data-tooltip-position="top" data-tooltip-text="Diamètre"></span></th>
+					<td>12 742 km</td>
+				</tr>
+				<tr>
+					<th><span class="icon-vit tooltip" data-tooltip-position="top" data-tooltip-text="Vitesse de rotation (à l'équateur)"></span></th>
+					<td>1 675 km/h</td>
+				</tr>
+				<tr>
+					<th><span class="icon-per tooltip" data-tooltip-position="top" data-tooltip-text="Période de rotation (jour solaire)"></span></th>
+					<td>24h 0m</td>
+				</tr>
+				<tr>
+					<th><span class="icon-grav tooltip" data-tooltip-position="top" data-tooltip-text="Gravité"></span></th>
+					<td>9,8 m/s²</td>
+				</tr>
+			</table>
+		</div>
+		<div class="grid-25 mobile-grid-50">
+			<div class="title">Mars</div>
+			<table class="params">
+				<tr>
+					<th><span class="icon-dist tooltip" data-tooltip-position="top" data-tooltip-text="Distance du soleil"></span></th>
+					<td>227,9 millions km<br>
+					1,52 <abbr class="tooltip" data-tooltip-position="top" data-tooltip-text="unité astronomique, 1 UA = distance de la Terre au Soleil">UA</abbr></td>
+				</tr>
+				<tr>
+					<th><span class="icon-diam tooltip" data-tooltip-position="top" data-tooltip-text="Diamètre"></span></th>
+					<td>6 779 km</td>
+				</tr>
+				<tr>
+					<th><span class="icon-vit tooltip" data-tooltip-position="top" data-tooltip-text="Vitesse de rotation (à l'équateur)"></span></th>
+					<td>868 km/h</td>
+				</tr>
+				<tr>
+					<th><span class="icon-per tooltip" data-tooltip-position="top" data-tooltip-text="Période de rotation (jour solaire)"></span></th>
+					<td>1j 0h 40m</td>
+				</tr>
+				<tr>
+					<th><span class="icon-grav tooltip" data-tooltip-position="top" data-tooltip-text="Gravité"></span></th>
+					<td>3,7 m/s²</td>
+				</tr>
+			</table>
+		</div>
+		<div class="clear h30 hide-on-mobile"></div>
+		<div class="grid-25 mobile-grid-50">
+			<div class="title">Jupiter</div>
+			<table class="params">
+				<tr>
+					<th><span class="icon-dist tooltip" data-tooltip-position="top" data-tooltip-text="Distance du soleil"></span></th>
+					<td>778,5 millions km<br>
+					5,20 <abbr class="tooltip" data-tooltip-position="top" data-tooltip-text="unité astronomique, 1 UA = distance de la Terre au Soleil">UA</abbr></td>
+				</tr>
+				<tr>
+					<th><span class="icon-diam tooltip" data-tooltip-position="top" data-tooltip-text="Diamètre"></span></th>
+					<td>139 822 km</td>
+				</tr>
+				<tr>
+					<th><span class="icon-vit tooltip" data-tooltip-position="top" data-tooltip-text="Vitesse de rotation (à l'équateur)"></span></th>
+					<td>47 051 km/h</td>
+				</tr>
+				<tr>
+					<th><span class="icon-per tooltip" data-tooltip-position="top" data-tooltip-text="Période de rotation (jour solaire)"></span></th>
+					<td>0j 9h 56m</td>
+				</tr>
+				<tr>
+					<th><span class="icon-grav tooltip" data-tooltip-position="top" data-tooltip-text="Gravité"></span></th>
+					<td>24,8 m/s²</td>
+				</tr>
+			</table>
+		</div>
+		<div class="grid-25 mobile-grid-50">
+			<div class="title">Saturne</div>
+			<table class="params">
+				<tr>
+					<th><span class="icon-dist tooltip" data-tooltip-position="top" data-tooltip-text="Distance du soleil"></span></th>
+					<td>1,429 milliard km<br>
+					9,54 <abbr class="tooltip" data-tooltip-position="top" data-tooltip-text="unité astronomique, 1 UA = distance de la Terre au Soleil">UA</abbr></td>
+				</tr>
+				<tr>
+					<th><span class="icon-diam tooltip" data-tooltip-position="top" data-tooltip-text="Diamètre"></span></th>
+					<td>116 464 km</td>
+				</tr>
+				<tr>
+					<th><span class="icon-vit tooltip" data-tooltip-position="top" data-tooltip-text="Vitesse de rotation (à l'équateur)"></span></th>
+					<td>34 821 km/h</td>
+				</tr>
+				<tr>
+					<th><span class="icon-per tooltip" data-tooltip-position="top" data-tooltip-text="Période de rotation (jour solaire)"></span></th>
+					<td>0j 10h 42m</td>
+				</tr>
+				<tr>
+					<th><span class="icon-grav tooltip" data-tooltip-position="top" data-tooltip-text="Gravité"></span></th>
+					<td>10,4 m/s²</td>
+				</tr>
+			</table>
+		</div>
+		<div class="grid-25 mobile-grid-50">
+			<div class="title">Uranus</div>
+			<table class="params">
+				<tr>
+					<th><span class="icon-dist tooltip" data-tooltip-position="top" data-tooltip-text="Distance du soleil"></span></th>
+					<td>2,871 milliards km<br>
+					19,2 <abbr class="tooltip" data-tooltip-position="top" data-tooltip-text="unité astronomique, 1 UA = distance de la Terre au Soleil">UA</abbr></td>
+				</tr>
+				<tr>
+					<th><span class="icon-diam tooltip" data-tooltip-position="top" data-tooltip-text="Diamètre"></span></th>
+					<td>50 724 km</td>
+				</tr>
+				<tr>
+					<th><span class="icon-vit tooltip" data-tooltip-position="top" data-tooltip-text="Vitesse de rotation (à l'équateur)"></span></th>
+					<td>9 320 km/h</td>
+				</tr>
+				<tr>
+					<th><span class="icon-per tooltip" data-tooltip-position="top" data-tooltip-text="Période de rotation (jour solaire)"></span></th>
+					<td>0j 17h 14m</td>
+				</tr>
+				<tr>
+					<th><span class="icon-grav tooltip" data-tooltip-position="top" data-tooltip-text="Gravité"></span></th>
+					<td>8,7 m/s²</td>
+				</tr>
+			</table>
+		</div>
+		<div class="grid-25 mobile-grid-50">
+			<div class="title">Neptune</div>
+			<table class="params">
+				<tr>
+					<th><span class="icon-dist tooltip" data-tooltip-position="top" data-tooltip-text="Distance du soleil"></span></th>
+					<td>4,498 milliards km<br>
+					30 <abbr class="tooltip" data-tooltip-position="top" data-tooltip-text="unité astronomique, 1 UA = distance de la Terre au Soleil">UA</abbr></td>
+				</tr>
+				<tr>
+					<th><span class="icon-diam tooltip" data-tooltip-position="top" data-tooltip-text="Diamètre"></span></th>
+					<td>49 244 km</td>
+				</tr>
+				<tr>
+					<th><span class="icon-vit tooltip" data-tooltip-position="top" data-tooltip-text="Vitesse de rotation (à l'équateur)"></span></th>
+					<td>9 660 km/h</td>
+				</tr>
+				<tr>
+					<th><span class="icon-per tooltip" data-tooltip-position="top" data-tooltip-text="Période de rotation (jour solaire)"></span></th>
+					<td>0j 16h 6m</td>
+				</tr>
+				<tr>
+					<th><span class="icon-grav tooltip" data-tooltip-position="top" data-tooltip-text="Gravité"></span></th>
+					<td>11,2 m/s²</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="h30"></div>
+	<div class="grid-container">
+		<div class="grid-50">
+			<figure>
+				<a class="modal" href="./img/systeme-solaire-false.png"><img src="./img/systeme-solaire-false.png" alt=""></a>
+				<figcaption>Le système solaire communement représenté</figcaption>
+			</figure>
+		</div>
+		<div class="grid-50">
+			<figure>
+				<a class="modal" href="./img/systeme-solaire-true.png"><img src="./img/systeme-solaire-true.png" alt=""></a>
+				<figcaption>Le système solaire plus vraisemblable<figcaption>
+			</figure>
+		</div>
+		<div class="clear"></div>
+	</div>
+	<footer>@EnMoiJeCrois</footer>
+</div>
+
+<script src="./js/horwheel.min.js"></script>
+<script>
+	var view = document.getElementById('wrapper');
+	horwheel(view);
+</script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="./js/jquery.easing.1.3.js"></script>
+<script src="./js/jquery.scrollTo.min.js"></script>
+<script src="./js/jquery.autotooltip.js"></script>
+<script>
+$(function(){
+	// barre d'échelle
+	function addSpace(nStr){
+		nStr += '';
+		if (nStr.length < 4){
+			return nStr;
+		}
+		parts = nStr.split('');
+		return parts[0]+" "+parts[1]+parts[2]+parts[3];
+	}
+	var htmlBar = '<div class="d_100" id="scroll"><span>&#x21E9;</span> scroll</div>\
+				<div class="d_100">0</div>\
+				<div class="d_400">1 000 000 km<br> 100 px</div>\
+				<div class="d_500">5 000 000 km<br> 500 px</div>',
+		cntUA = 1;
+	for (i=1; i<=450; i++){
+		htmlBar += (i == 450) ? '<div class="d_500">' :'<div class="d_1000">';
+		if (i % 15 === 0){
+			htmlBar += '<span class="ua">' + cntUA + ' UA</span> ';
+			cntUA++;
+		}
+		htmlBar += addSpace(String(i * 10)) + ' 000 000 km<br> ' + String(i) + ' 000 px</div>';
+	}
+	$(".bar").html(htmlBar);
+	
+	// liens - raccourcis
+	$(".shortcut").click(function(){
+		var elemId = $(this).attr("href");
+		$(".wrapper-scroll").scrollTo($(elemId), 3000,{ easing:'easeInOutExpo' });
+		return false;
+	});
+	
+	// parallax
+	var cw = $(".content").width();
+	function newPos(x, windowHeight, pos, adjuster, inertia){
+		return (-((windowHeight + pos) - adjuster) * inertia) + "px " + x + "px";
+	}
+	var y1 = y2 = 0;
+	function newPosY1(){
+		if (y1 == 300) y1 = 0;
+		y1++; return y1;
+	}
+	function newPosY2(){
+		if (y2 == 300) y2 = 0;
+		y2--; return y2;
+	}
+	function moveBG(){
+		var pos = $(".wrapper-scroll").scrollLeft();
+		$(".content").css({"background-position":newPos(newPosY1(), cw, pos, 500, 0.25)});
+		$(".section").css({"background-position":newPos(newPosY2(), cw, pos, 500, 0.5)});
+	}
+	moveBG();
+	$(window).bind('resize', function(){
+		moveBG();
+	});
+	$(".wrapper-scroll").bind('scroll', function(){
+		moveBG();
+	});
+	
+	// tooltip
+	$(".tooltip").tooltip({
+		"animation": "fade", // "scale", "fade", "slide"
+		space: 10
+	});
+	
+	// modal
+	$('.modal').click(function(e){
+		e.preventDefault();
+		var imgHref = $(this).attr("href");
+		var imgWidth, imgHeight;
+		$("<img/>").attr("src", imgHref).load(function(){
+			imgWidth = this.width;
+			imgHeight = this.height;
+		});
+		if ($('#modal').length){
+			$('#modal-content').html('<img src="' + imgHref + '" alt="">');
+			$('#modal').fadeIn();
+		} else {
+			var modal = 
+				'<div id="modal" style="display:none;">' +
+					'<div id="modal-close">×</div>' +
+					'<div id="modal-content">' +
+						'<img src="' + imgHref +'" alt="">' +
+					'</div>' +	
+				'</div>';
+			$('body').append(modal);
+			$('#modal').fadeIn();
+		}
+	});
+	$(document).on('click', '#modal', function(){
+		$('#modal').fadeOut();
+	});
+});
+</script>
+
+</body>
+</html>
